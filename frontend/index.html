@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>首页</title>
+
+    <!-- layUI框架的样式表 -->
+    <link rel="stylesheet" href="./layui/css/layui.css" type="text/css" />
+
+    <style>
+        body{
+            background-color: #d2d2d2;
+        }
+    </style>
+
+
+
+</head>
+<body>
+
+
+<div class="layui-container">  
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <ul class="layui-nav" lay-filter="">
+                <li class="layui-nav-item layui-this"><a href="./index.html">首页</a></li>
+                <li class="layui-nav-item"><a onclick="fun1()" >场地查询</a></li>
+                <li class="layui-nav-item"><a >我的订单<span class="layui-badge">9</span></a></li>
+                <li class="layui-nav-item"><a href="">体育新闻<span class="layui-badge-dot"></span></a></li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">个人中心</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">修改信息</a></dd>
+                        <dd><a href="javascript:;">退出登录</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- 首页 -->
+<div id="pann1" class="pann">
+<div class="layui-container">  
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <div class="layui-carousel" id="test1">
+                <div carousel-item>
+                    <div><img src="./img/1.png"></div>
+                    <div><img src="./img/2.png"></div>
+                    <div><img src="./img/3.png"></div>
+                    <div><img src="./img/4.png"></div>
+                    <div><img src="./img/5.png"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md9">
+            <div class="layui-card">
+                <div class="layui-card-header">当前场地使用状况总览</div>
+                <div class="layui-card-body">
+                    
+                    <div>
+                        <i class="layui-icon layui-icon-log"></i>   时间筛选 <div class="layui-inline"><input type="text" class="layui-input" id="test2"></div><button class="layui-btn">确定</button>
+                        <p> </p>
+                        <p> </p>
+                    </div><br>
+
+                    羽毛球场
+                    <div class="layui-progress layui-progress-big" lay-showPercent="true">
+                        <div class="layui-progress-bar" lay-percent="1/5"></div>
+                    </div>
+                    <br>
+                    
+                    篮球场
+                    <div class="layui-progress layui-progress-big" lay-showPercent="true">
+                        <div class="layui-progress-bar layui-bg-orange" lay-percent="1/2"></div>
+                    </div>
+                    <br>
+                    
+                    排球场
+                    <div class="layui-progress layui-progress-big" lay-showPercent="true">
+                        <div class="layui-progress-bar layui-bg-blue" lay-percent="4/5"></div>
+                    </div>
+                    <br>
+
+                    乒乓球场
+                    <div class="layui-progress layui-progress-big" lay-showPercent="true">
+                        <div class="layui-progress-bar" lay-percent="1/5"></div>
+                    </div>
+                    <br>
+                    
+
+                </div>
+            </div>   
+        </div>
+
+
+        <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-header">最新预定</div>
+                <div class="layui-card-body">
+                    <ul class="layui-timeline">
+
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title">2019-01-03</h3>
+                            <p>
+                                layui 2.0 的一切准备工作似乎都已到位。发布之弦，一触即发。
+                            </p>
+                            </div>
+                        </li>
+
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title">2019-01-01</h3>
+                            <p>杜甫的思想核心是儒家的仁政思想</p>
+                            </div>
+                        </li>
+
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title">2019-01-01</h3>
+                            <p>
+                                中国人民抗日战争胜利72周年
+                            </p>
+                            </div>
+                        </li>
+
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                            <div class="layui-timeline-title">查看全部</div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>   
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- 场地查询页面 -->
+<div id="pann2" class="pann" style="display: none ">
+<div class="layui-container">  
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">篮球场</li>
+            <li>排球场</li>
+            <li>羽毛球场</li>
+            <li>乒乓球场</li>
+        </ul>
+
+        
+        <div class="layui-tab-content" style="height: 100px;">
+
+            <!-- 篮球场 -->
+            <div class="layui-tab-item layui-show layui-col-md3 ">
+                <div class="layui-card">
+                    <div class="layui-card-header">篮球场1</div>
+                    <div class="layui-card-body">
+                        篮球场1在***位置<br>
+                        从而映衬出边框投影
+                    </div>
+                </div>
+            </div>
+
+            <!-- 排球场 -->
+            <div class="layui-tab-item layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">排球场1</div>
+                    <div class="layui-card-body">
+                        卡片式面板面板通常用于非白色背景色的主体内<br>
+                        从而映衬出边框投影
+                    </div>
+                </div>
+            </div>
+
+            <!-- 羽毛球场 -->
+            <div class="layui-tab-item layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">羽毛球场1</div>
+                    <div class="layui-card-body">
+                        卡片式面板面板通常用于非白色背景色的主体内<br>
+                        从而映衬出边框投影
+                    </div>
+                </div>
+            </div>
+
+            <!-- 乒乓球场 -->
+            <div class="layui-tab-item layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">乒乓球场1</div>
+                    <div class="layui-card-body">
+                        卡片式面板面板通常用于非白色背景色的主体内<br>
+                        从而映衬出边框投影
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>      
+            
+</div>
+
+</div>
+
+
+        
+
+    <!-- layUI框架的脚本 -->
+    <script src="./layui/layui.all.js"></script>
+
+    <!-- 导航栏 -->
+    <script>
+
+        //导航栏
+        layui.use('element', function(){
+            var element = layui.element;
+        });
+
+        //轮播
+        layui.use('carousel', function(){
+            var carousel = layui.carousel;
+            //建造实例
+            carousel.render({
+                elem: '#test1'
+                ,width: '100%' //设置容器宽度
+                ,arrow: 'always' //始终显示箭头
+                ,interval: 6000 //图片切换时常6000毫秒
+                //,anim: 'updown' //切换动画方式
+            });
+        });
+
+        //日期时间输入
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#test2' //指定元素
+                ,type: 'datetime'
+            });
+        });
+
+
+        //页面逻辑
+        pann1 = document.getElementById("pann1");
+        pann2 = document.getElementById("pann2");
+        panns = document.getElementsByClassName("pann")
+
+
+
+        //场地查询按钮
+        fun1 = function(){
+            //清除页面，只保留导航栏
+            for(i=0;i<panns.length;i++) panns[i].style.display = "none";
+            pann2.style.display = "block";
+
+            
+            // layui.use('form', function(){
+            //     var form = layui.form;
+                
+            // });
+
+            //接下来应该进行一系列ajax操作
+            
+        }
+
+    </script> 
+
+
+
+</body>
+</html>
