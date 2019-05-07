@@ -621,31 +621,50 @@ def user_book_list():
 
 @app.route('/api/cancel')
 def cancel():
+    success_dict = {
+        "status": 1
+    }
     idid = request.args.get("idid")
     cancel_one(idid)
 
-    return jsonify([1])
+    return jsonify(success_dict)
 
 
 @app.route('/api/user_get_profile')
 def user_get_profile():
     u_name = current_user.name
-    return jsonify([u_name])
+    success_dict = {
+        "status": 1
+    }
+
+    success_dict["name"] = u_name
+    return jsonify(success_dict)
 
 
 @app.route('/api/user_change_profile')
 def user_change_profile():
     u_name = request.args.get("u_name")
     u_password = request.args.get("u_password")
+    success_dict = {
+        "status": 1
+    }
+
+    fail_dict = {
+        "status": 0,
+        "info": ""
+    }
 
     # 空参数直接返回失败
     if not u_name or not u_password:
-        return jsonify([0])
+        fail_dict["info"] = "存在空参数"
+        return jsonify(fail_dict)
 
     # 查询一下用户看看有没有重名的，重名直接返回失败
-    temp_u = User.query.filter_by(name=u_name)
+    temp_u = User.query.filter_by(name=u_name).first()
     if not temp_u:
-        return jsonify([0])
+        if temp_u.id != current_user.id
+            fail_dict["info"] = "你想要的新用户名已经被其他用户占用"
+            return jsonify(fail_dict)
 
     u = User.query.get(current_user.id)
     u.name = u_name
@@ -654,7 +673,7 @@ def user_change_profile():
 
     # 改完用户信息之后进行一次登出操作
     logout_user()
-    return jsonify([1])
+    return jsonify(success_dict)
 
 
 @app.route('/api/last_operation')
