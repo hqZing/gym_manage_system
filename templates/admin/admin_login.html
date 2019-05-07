@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>管理员登陆</title>
+    <!-- layUI样式表CDN -->
+    <link rel="stylesheet" href="https://heerey525.github.io/layui-v2.4.3/layui-v2.4.5/css/layui.css">
+    <style>
+    #co{
+        width: 400px;
+        margin: 0 auto;
+        margin-top: 300px;
+    }
+    body{
+        background-color: #e2e2e2;
+    }
+    </style>
+</head>
+<body>
+
+    <div class="layui-card" id="co" >
+        <div class="layui-card-header">管理员登陆</div>
+
+        <div class="layui-card-body">
+            <form class="layui-form" action="http://127.0.0.1/admin_login">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-block">
+                    <input type="text" name="name" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+        
+                <div class="layui-form-item">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-block">
+                    <input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+        
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formDemo">登陆</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">清除</button>
+                    </div>
+                </div>
+        
+            </form>
+            
+        </div>
+    </div>
+
+
+ <!-- layUI脚本CDN -->
+<script src="https://heerey525.github.io/layui-v2.4.3/layui-v2.4.5/layui.js"></script>
+
+<script>
+
+
+</script> 
+</body>
+</html>
+      

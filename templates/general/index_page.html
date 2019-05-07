@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>体育馆管理系统</title>
+
+    <!-- layUI样式表CDN -->
+    <link rel="stylesheet" href="https://heerey525.github.io/layui-v2.4.3/layui-v2.4.5/css/layui.css" type="text/css" />
+
+    <style>
+        body{
+            background-color: #d2d2d2;
+        }
+    </style>
+
+
+
+</head>
+<body>
+
+<!-- 导航栏 -->
+<div class="layui-container">  
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <ul class="layui-nav" lay-filter="">
+                <li class="layui-nav-item layui-this"><a href="./index_page">首页</a></li>
+                <li class="layui-nav-item"><a onclick="cd_cdcx()" >场地查询</a></li>
+                <li class="layui-nav-item"><a onclick="cd_wddd()" >我的订单<span class="layui-badge" id="GCVSX">0</span></a></li>
+                <li class="layui-nav-item"><a onclick="cd_tyxw()" >体育新闻<span class="layui-badge-dot"></span></a></li>
+                <li class="layui-nav-item"><a onclick="cd_grzx()" >个人中心</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- 首页 -->
+<div id="pann1" class="pann">
+<div class="layui-container">  
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <div class="layui-carousel" id="test1">
+                <div carousel-item>
+                    <div><img src="./img/1.png"></div>
+                    <div><img src="./img/2.png"></div>
+                    <div><img src="./img/3.png"></div>
+                    <div><img src="./img/4.png"></div>
+                    <div><img src="./img/5.png"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md9">
+            <div class="layui-card">
+                <div class="layui-card-header">当前场地使用状况总览</div>
+                <div class="layui-card-body">
+                    
+                    <div>
+                        <i class="layui-icon layui-icon-log"></i>   时间筛选 <div class="layui-inline"><input type="text" class="layui-input" id="DF6X71"></div><button class="layui-btn" onclick="summary()">确定</button>
+                        <p> </p>
+                        <p> </p>
+                    </div><br>
+
+                    <div id="MC2XH6">
+                        <!-- 各种球场的使用量 -->
+                    </div>
+                    
+
+                </div>
+            </div>   
+        </div>
+
+
+        <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-header">最新预定</div>
+                <div class="layui-card-body">
+                    <ul class="layui-timeline" id="NG224C">
+
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title" id="JV2X4"></h3>
+                            <p id="MJSF2"></p>
+                            </div>
+                        </li>
+
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title" id="OF1DD"></h3>
+                            <p id="DTX7J"></p>
+                            </div>
+                        </li>
+
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title" id="NJXCK"></h3>
+                            <p id="AL021"></p>
+                            </div>
+                        </li>
+
+
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                            <div class="layui-timeline-title">查看全部</div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>   
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- 场地查询页面 -->
+<div id="pann2" class="pann" style="display: none">
+    <div class="layui-container">  
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+            <!-- 各种球类的导航栏 -->
+            <ul class="layui-tab-title" id="MV3T98"></ul>
+            <!-- 各种球类的标签页面 -->
+            <div class="layui-tab-content" style="height: 100px;" id="IJMSL"> </div>
+
+        </div>      
+                
+    </div>
+
+</div>
+
+<!-- 体育新闻页面 -->
+<div id="pann3" class="pann" style="display: none">
+
+    <!-- 直接在这里摆放所有卡片 -->
+    <div class="layui-container">  
+        <div class="layui-row layui-col-space10" id="MUDFS">
+
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">卡片标题</div>
+                    <div class="layui-card-body">卡片主体</div>
+                </div>   
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- 我的订单页面 -->
+<div id="pann4" class="pann" style="display: none">
+
+    <!-- 在这里面放置表格来展示当前订单 -->
+    <div class="layui-container">  
+        <div class="layui-row layui-col-space10" id="MUDFS">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body" id="XS44S8">？</div>
+                </div>   
+            </div>
+        </div>
+    </div>
+  
+</div>
+
+<!-- 个人中心页面 -->
+<div id="pann5" class="pann" style="display: none">
+
+    <!-- 在这里面放置表格来展示当前订单 -->
+    <div class="layui-container">  
+        <div class="layui-row layui-col-space10" id="MUDFS">
+
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-body" id="YM475X">
+                        <!-- 修改个人信息的框框 -->
+                        <form class="layui-form">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">用户名</label>
+                                <div class="layui-input-block">
+                                <input type="text" value="sansansan" class="layui-input" id="L4D76Q">
+                                </div>
+                            </div>
+                
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">密码</label>
+                                <div class="layui-input-block">
+                                <input type="text" placeholder="" class="layui-input" id="CV33WW">
+                                </div>
+                            </div>
+                
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="button" class="layui-btn" onclick="user_change_profile()">修改信息</button>
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="button" class="layui-btn layui-btn-danger" onclick="logout()">退出登陆</button>
+                                </div>
+                            </div>
+                
+                        </form>
+                    </div>
+                </div>   
+            </div>
+
+            
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-body" id="RCM87E">？</div>
+                </div>   
+            </div>
+
+        </div>
+    </div>
+  
+</div>
+
+
+<!-- layUI脚本CDN -->
+<script src="https://heerey525.github.io/layui-v2.4.3/layui-v2.4.5/layui.js"></script>
+
+<!-- 核心交互脚本 -->
+<script>
+
+    //初始化layUI组件
+    init_index = function(){
+        
+
+
+
+        //导航栏
+        layui.use('element', function(){
+            var element = layui.element;
+        });
+
+        //轮播
+        layui.use('carousel', function(){
+            var carousel = layui.carousel;
+            //建造实例
+            carousel.render({
+                elem: '#test1'
+                ,width: '100%' //设置容器宽度
+                ,arrow: 'always' //始终显示箭头
+                ,interval: 6000 //图片切换时常6000毫秒
+                //,anim: 'updown' //切换动画方式
+            });
+        });
+
+        //日期时间输入
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#DF6X71' //指定元素
+                ,type: 'datetime'
+            });
+        });
+
+        layui.use('form', function(){
+            var form = layui.form;
+            
+        });
+
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            
+            // layer.msg('hello');
+        }); 
+
+        
+    }
+
+    //页面切换逻辑
+    pann1 = document.getElementById("pann1");
+    pann2 = document.getElementById("pann2");
+    pann3 = document.getElementById("pann3");
+    pann4 = document.getElementById("pann4");
+    pann5 = document.getElementById("pann5");
+    panns = document.getElementsByClassName("pann")
+
+    //场地查询导航
+    cd_cdcx = function(){
+        //清除页面，只保留导航栏
+        for(i=0;i<panns.length;i++) panns[i].style.display = "none";
+        pann2.style.display = "block";
+
+        
+        //进行一系列ajax操作
+        field_info();
+        
+    }
+
+    //体育新闻导航
+    cd_tyxw = function(){
+        for(i=0;i<panns.length;i++) panns[i].style.display = "none";
+        pann3.style.display = "block";
+
+        //处理新闻逻辑
+        news_list();
+        
+        
+    }
+    
+    //我的订单导航
+    cd_wddd = function(){
+        for(i=0;i<panns.length;i++) panns[i].style.display = "none";
+        pann4.style.display = "block";
+    }
+
+    cd_grzx = function(){
+        for(i=0;i<panns.length;i++) panns[i].style.display = "none";
+        pann5.style.display = "block";
+
+        //获取个人信息，包括当前的用户名。还有最近的一些操作记录
+        user_get_profile();
+    }
+
+
+    //使用状况总览
+    summary = function(){
+
+        time = document.getElementById("DF6X71").value
+
+        console.log(time);
+        if (time==""){
+            time = "2019-05-06 13:00:00"
+        }
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/summary?time="+time,true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+
+            // 在监听函数中，判断readyState=4 && status=200表示请求成功
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                // 使用responseText、responseXML接受响应数据，并使用原生JS操作DOM进行显示
+                C1D53 = xmlhttp.responseText;
+                C1D53 = JSON.parse(C1D53)
+
+                console.log(C1D53);
+                temp_html = ""
+
+    
+
+                //四种背景颜色轮流来
+                bgbg = ["layui-bg-orange", "layui-bg-blue", "layui-bg-red", "layui-bg-green"]
+                temp_ttt = 0
+                for (e in C1D53){
+                    temp_html += e
+                    temp_html +=
+                    "<div class=\"layui-progress layui-progress-big\" lay-showPercent=\"true\">" +
+                    "<div class=\"layui-progress-bar " + bgbg[temp_ttt] +"\" lay-percent=\""+C1D53[e]+"\"></div>" +
+                    "</div><br>"
+                
+                    // console.log(e)
+                    temp_ttt = (temp_ttt+1) %4
+                }
+
+                // console.log(temp_html)
+
+                document.getElementById("MC2XH6").innerHTML = temp_html;
+
+                //更新完页面之后重新渲染
+                layui.use('element', function() {
+                    var element = layui.element;
+                    element.init();
+                });
+            }
+        }
+
+        xmlhttp.send("");
+
+
+    }
+
+    //最新预定
+    latest = function(){
+
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/latest",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+
+                console.log(myres);
+
+                            
+                document.getElementById("JV2X4").innerHTML =  myres[0]["cmtime"]
+                document.getElementById("MJSF2").innerHTML =  "用户【" + myres[0]["username"] +"】" +"预约了"+ myres[0]["fieldname"]
+
+                document.getElementById("OF1DD").innerHTML =  myres[1]["cmtime"]
+                document.getElementById("DTX7J").innerHTML =  "用户【" + myres[1]["username"] +"】" +"预约了"+ myres[1]["fieldname"]
+
+                document.getElementById("NJXCK").innerHTML =  myres[2]["cmtime"]
+                document.getElementById("AL021").innerHTML =  "用户【" + myres[2]["username"] +"】" +"预约了"+ myres[2]["fieldname"]
+            }
+        }
+
+        xmlhttp.send("");
+                    
+    }
+
+    //场地查询
+    field_info = function(){
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/field_info",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+
+                console.log(myres);
+
+                
+
+                temp_html = ""
+                temp_html2 = ""
+
+                for (e in myres){
+                    //标签标题
+                    temp_html += "<li>" + e + "</li>" 
+
+                    temp_html2 += "<div class=\"layui-tab-item layui-col-md3\">"
+
+                    //分别添加标签页
+                    for (i=0; i<myres[e].length; i++){
+                        temp_html2+= "<div class=\"layui-card\">"
+                        + "<div class=\"layui-card-header\">" + myres[e][i][2] + "</div>"
+                        + "<div class=\"layui-card-body\">" + myres[e][i][4] + "<br>价格为"+ myres[e][i][3] +"<br>"//+ "<br>id为" + myres[e][i][0] + "<br>"
+                        + "<button class=\"layui-btn  layui-btn-sm\" onclick=\"qry("+ myres[e][i][0] + ")\">查询</button>"
+                        + "<button class=\"layui-btn  layui-btn-sm layui-btn-warm\" onclick=\"get_field_name("+ myres[e][i][0] + ")\">预定</button>"
+                        + "</div></div>"
+                    }
+                    temp_html2 += "</div>"
+
+                }
+                
+
+                document.getElementById("MV3T98").innerHTML =  temp_html
+                document.getElementById("IJMSL").innerHTML =  temp_html2
+
+                document.getElementById("MV3T98").children[0].className += 'layui-this'
+                document.getElementById("MV3T98").children[0].click()
+                // document.getElementById("IJMSL").children[0].className += 'layui-show'
+
+                
+                layui.use('element', function() {
+                    var element = layui.element;
+                    element.init();
+                });
+                
+            }
+            
+        }
+
+
+        xmlhttp.send("");
+
+        
+    }
+
+    //查询场地占用状况。使用id查询
+    qry = function(idid){
+        console.log(idid)
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/qry?idid="+idid,true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+
+                console.log(myres);
+
+                temp_html = ""
+
+                temp_html += "<table class=\"layui-table\">"
+                +  "<thead><tr><th>用户</th><th>起始时间</th><th>结束时间</th><th>下单时间</th></tr></thead><tbody>"
+
+                for(i=0; i<myres.length; i++){
+                    temp_html += "<tr>"
+                    + "<td>" + myres[i][0] +"</td>"
+                    + "<td>" + myres[i][2] +"</td>"
+                    + "<td>" + myres[i][3] +"</td>"
+                    + "<td>" + myres[i][4] +"</td>"
+                    + "</tr>"
+                }
+
+                temp_html += "</tbody></table>"
+
+                if (myres.length>0){
+                    layer.open({
+                        type: 1, 
+                        area: '800px',
+                        title: myres[0][1]+"的预定情况",
+                        content:  "<div style=\"padding: 20px;\">" + temp_html + "</div>"
+                    });
+                }
+                else{
+                    layer.open({
+                        type: 1, 
+                        title: "提示",
+                        content:  "<div style=\"padding: 20px;\">" + "<p>该场地目前无人预定</p>" + "</div>"
+                    });
+                }
+
+            }
+        }
+        xmlhttp.send("");
+
+
+    }
+
+    //查询预定状况
+    get_field_name = function(idid){
+  
+        temp_html = "<div style=\"padding: 20px;text-align: center\">"
+        temp_html += "<div class=\"layui-inline\"><p>起始时间</p><input type=\"text\" class=\"layui-input\" id=\"MSYCIU\"></div><br>"
+        + "<div class=\"layui-inline\"><p>结束时间</p><input type=\"text\" class=\"layui-input\" id=\"UCYENS\"></div><br><br>"
+        + "<button class=\"layui-btn\" onclick=\"bookit(" + idid + ")\">确定</button>"
+        + "</div>"
+
+        //获取球场名称
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/get_field_name?idid="+idid,true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+
+                console.log(myres);
+
+                fname = myres[0]
+                //显示弹出层
+                layer.open({
+                    type: 1, 
+                    area: '500px',
+                    title: "预定"+fname,
+                    content: temp_html
+                });
+                //刷新时间控件
+                layui.use('laydate', function(){
+                    var laydate = layui.laydate;
+                    laydate.render({
+                        elem: '#MSYCIU'
+                        ,type: 'datetime'
+                    });
+                });
+                layui.use('laydate', function(){
+                    var laydate = layui.laydate;
+                    laydate.render({
+                        elem: '#UCYENS'
+                        ,type: 'datetime'
+                    });
+                });
+
+            }
+        }
+        xmlhttp.send("");
+        layui.use('element', function() {
+            var element = layui.element;
+            element.init();
+        });
+
+
+    }
+
+    //提交预定信息
+    bookit = function(idid){
+
+        //获取起始时间和结束时间，将其传参
+        sttime_ = document.getElementById("MSYCIU").value
+        edtime_ = document.getElementById("UCYENS").value
+        uri = "http://127.0.0.1/api/bookit?idid=" + idid +"&st=" + sttime_ +"&ed=" + edtime_
+
+        console.log(uri)
+
+        //尝试预定 ，将预定的成功与否以弹窗的形式弹出来
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET", uri, true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+
+                layer.closeAll(); //疯狂模式，关闭所有层
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+
+                console.log(myres);
+
+                //如果得到的回执为1，就是预定成功。回执为0，说明有时间冲突，预定失败
+                if (myres["status"] == 1){
+                    temp_html = "<p>预定成功, </p>" 
+                    + "<p>你选择的场地使用时长共 " + myres["hours"] + " 小时</p>"
+                    + "<p>需要支付的费用为 " + myres["totalprice"] +" 元</p>"
+                    + "<p>点我支付费用</p>"
+                }
+                else{
+                    temp_html = "<p>预定失败，</p><p>" + myres["info"] + "</p>"
+                }
+
+                
+                layer.open({
+                    type: 1, 
+                    area: '500px',
+                    title: "预定结果",
+                    content: "<div style=\"padding: 20px;\">" + temp_html + "</div>"
+                });
+
+            }
+        }
+        xmlhttp.send("");
+
+
+
+    }
+
+    //新闻列表
+    news_list = function(){
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/news_list",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres)
+
+
+                temp_html = ""
+
+                for (i=0; i<myres.length; i++){
+                    temp_html += "<div class=\"layui-col-md12\">"
+                    + " <div class=\"layui-card\">"
+                    + "<div class=\"layui-card-header\"><a onclick=\"news_detail(" + myres[i][0] + ")\">" + myres[i][1] +"</a></div>"//新闻标题
+                    + "<div class=\"layui-card-body\">" + myres[i][2] + "</div>" //新闻预览
+                    + "</div></div>"
+                }
+
+                document.getElementById("MUDFS").innerHTML = temp_html
+            }
+        }
+        xmlhttp.send("");
+    }
+
+    //新闻详情
+    news_detail = function(idid){
+        console.log("idid", idid)
+
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/news_detail?idid="+idid,true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres)
+                // 
+
+                layer.open({
+                    type: 1, 
+                    area: '1000px',
+                    title: myres[0][1],
+                    content: "<div style=\"padding: 20px;\">" + myres[0][2] + "</div>"
+                });
+            }
+        }
+        xmlhttp.send("");
+    }
+
+    //获取当前用户的订单列表
+    user_book_list = function(){
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/user_book_list",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres)
+
+                //显示“我的订单”右上角那个小红字
+                document.getElementById("GCVSX").innerHTML = "" + myres.length
+
+                //显示订单列表（在加载首页的时候也会照样进行这一步，只不过隐藏起来了没被看到而已）
+                temp_html = ""
+                temp_html += "<table class=\"layui-table\"><thead>" 
+                +  "<tr><th>订单id</th><th>场地名称</th><th>起始时间</th><th>结束时间</th><th>下单时间</th><th>取消订单</th></tr>"
+                +"</thead><tbody>"
+
+                for (i=0; i<myres.length; i++){
+
+                    temp_html += "<tr>"
+                    + "<td>" + myres[i][0] +"</td>"
+                    + "<td>" + myres[i][1] +"</td>"
+                    + "<td>" + myres[i][2] +"</td>"
+                    + "<td>" + myres[i][3] +"</td>"
+                    + "<td>" + myres[i][4] +"</td>"
+                    + "<td>" + "<button type=\"button\" class=\"layui-btn layui-btn-danger\" onclick=\"cancel(" + myres[i][0] + ")\">取消</button>" +"</td>"
+                    + "</tr>"
+                }
+
+                document.getElementById("XS44S8").innerHTML = temp_html
+            }
+        }
+        xmlhttp.send("")
+    }
+    
+    //取消订单
+    cancel = function(idid){
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/cancel?idid="+idid, true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres)
+                
+                //取消订单之后刷新列表
+                user_book_list()
+
+            }
+        }
+        xmlhttp.send("")
+    }
+
+    //获取个人信息
+    user_get_profile = function(){
+        xmlhttp=new XMLHttpRequest();
+        //不需要加参数，后端直接获取当前用户
+        xmlhttp.open("GET","http://127.0.0.1/api/user_get_profile", true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres)
+                document.getElementById("L4D76Q").value = myres[0]
+            }
+        }
+        xmlhttp.send("")
+    }
+
+
+    //修改个人信息
+    user_change_profile= function(){
+        u_name = document.getElementById("L4D76Q").value
+        u_password = document.getElementById("CV33WW").value
+    
+        xmlhttp=new XMLHttpRequest();
+        //需要提供用户名和密码
+        uri = "http://127.0.0.1/api/user_change_profile?u_name=" + u_name + "&u_password=" + u_password
+        xmlhttp.open("GET", uri, true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres)
+                
+                if (myres[0] == 1 ){
+                    //改完信息之后已经被登出了，所以这时候进行什么操作都是无效的，点击确定之后跳转到登陆页面重新登陆
+                    layer.open({
+                        type: 1, 
+                        area: '500px',
+                        title: "提示",
+                        content: "<div style=\"padding: 20px;\">" + "修改信息成功" + "</div>",
+                        cancel: function(){ 
+                            //右上角关闭回调
+                            window.location.href="./index_page"; 
+                        }
+                    });
+                }
+                else{
+                    layer.open({
+                        type: 1, 
+                        area: '500px',
+                        title: "提示",
+                        content: "<div style=\"padding: 20px;\">" + "修改信息失败，可能是用户名被占用，也可能是信息填写不完整" + "</div>"
+                    });
+                }
+            }
+        }
+        xmlhttp.send("")
+    }
+
+    //退出登录
+    logout = function(){
+        window.location.href="/api/logout"
+    }
+    
+    init_index()
+    setTimeout("latest()", 100)
+    setTimeout("summary()", 200)
+    setTimeout("user_book_list()", 300)
+</script> 
+
+
+
+</body>
+</html>

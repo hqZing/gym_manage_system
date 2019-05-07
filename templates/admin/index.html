@@ -1,0 +1,40 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+
+<div  style="border:1px solid #ddd;padding: 20px; ">
+    <p>这里是后台管理页面，在这个页面可以直接对后台的所有数据进行增删改查操作</p>
+    <p>后台一共有5个数据库表：</p>
+    <ul>
+        <li> user: 用户表</li> 
+        <li> book: 预定表</li>
+        <li> field: 场地表</li>
+        <li> news:  新闻表</li>
+        <li> operation:  操作记录表</li>
+    </ul>
+
+    <p>点击上面的导航栏即可对他们进行操作👆</p>
+
+    <p>操作方式：</p>
+
+    <ul>
+        <li>点击 <span class="fa fa-pencil glyphicon glyphicon-pencil"></span> 进行编辑</li> 
+        <li>点击 <span class="fa fa-trash glyphicon glyphicon-trash"></span> 进行删除</li>
+        <li>点击 <a>创建</a> 进行添加</li>
+        <li>勾选多行后，点击 <a>选中的</a>→删除 进行批量删除</li>
+    </ul>
+
+    <br>
+
+    <button type="button" class="btn btn-danger" onclick="admin_logout()">退出登陆</button>
+
+    <script>
+        admin_logout = function(){
+            window.location.href="../admin_logout"; 
+        }
+    </script>
+
+</div>
+
+{% endblock %}
+

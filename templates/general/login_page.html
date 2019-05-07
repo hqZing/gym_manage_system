@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>用户登陆</title>
+    <!-- layUI样式表CDN -->
+    <link rel="stylesheet" href="https://heerey525.github.io/layui-v2.4.3/layui-v2.4.5/css/layui.css">
+    <style>
+    #co{
+        width: 400px;
+        margin: 0 auto;
+        margin-top: 300px;
+    }
+    body{
+        background-color: #e2e2e2;
+    }
+    </style>
+</head>
+<body>
+
+    <div class="layui-card" id="co" >
+        <div class="layui-card-header">用户登陆</div>
+
+        <div class="layui-card-body">
+            <form class="layui-form">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-block">
+                    <input type="text"  placeholder="请输入用户名" autocomplete="off" class="layui-input" id="WHJT4">
+                    </div>
+                </div>
+        
+                <div class="layui-form-item">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-block">
+                    <input type="password" placeholder="请输入密码" autocomplete="off" class="layui-input" id="T7SXC">
+                    </div>
+                </div>
+        
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                    <button type="button" class="layui-btn" onclick="login_validation()">登陆</button>
+                    <button type="button" class="layui-btn layui-btn-primary" onclick="show_regi()">注册</button>
+                    </div>
+                </div>
+        
+            </form>
+            
+        </div>
+    </div>
+
+
+
+
+
+ <!-- layUI脚本CDN -->
+<script src="https://heerey525.github.io/layui-v2.4.3/layui-v2.4.5/layui.js"></script>
+
+
+<script>
+
+    layui.use('layer', function(){
+        
+        var layer = layui.layer;
+    });       
+
+    show_regi = function(){
+        // document.getElementById("regi").style.display = "block";
+        var $ = layui.$;//巨坑，如果不这么干的话无法使用jQuery选择器
+        layer.open({
+            type: 1,
+            title: "注册",
+            content: $("#regi")
+        });
+    }
+
+    //ajax登陆验证
+    login_validation = function(){
+        u_name = document.getElementById("WHJT4").value
+        u_password = document.getElementById("T7SXC").value
+
+        if (u_name == "") {
+            layer.open({
+                type: 1,
+                title: "提示",
+                content: "<div style=\"padding: 20px;\"> 用户名为空</div>"
+            });
+            return
+        }
+        
+        if (u_password == ""){
+            layer.open({
+                type: 1,
+                title: "提示",
+                content: "<div style=\"padding: 20px;\"> 密码为空</div>"
+            });
+            return
+        }
+
+        console.log(u_name, u_password)
+        uri = "http://127.0.0.1/api/login_validation?u_name="+ u_name + "&u_password=" + u_password
+
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET", uri, true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                
+                HX5DE = xmlhttp.responseText;
+                HX5DE = JSON.parse(HX5DE)
+
+                if (HX5DE[0] == 1){
+                    window.location.href="./index_page"; //登陆成功，跳转主页
+                }
+                else{
+                    layer.open({
+                        type: 1,
+                        title: "提示",
+                        content: "<div style=\"padding: 20px;\">登陆失败，请检查用户名和密码是否正确</div>"
+                    });
+                }
+            }
+        }
+        xmlhttp.send("");
+
+    }
+
+    //发起注册的网络请求
+    register = function(){
+
+        //获取输入框值
+        u_name = document.getElementById("OIC145").value
+        u_password = document.getElementById("MXY7QX").value
+
+        if (u_name == "") {
+            document.getElementById("LNCYSS").innerHTML= "用户名为空";
+            return
+        }
+        
+        if (u_password == ""){
+            document.getElementById("LNCYSS").innerHTML= "密码为空"
+            return
+        }
+
+        console.log(u_name, u_password)
+
+        uri = "http://127.0.0.1/api/register?u_name="+ u_name + "&u_password=" + u_password
+
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET", uri, true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                
+                HX5DE = xmlhttp.responseText;
+                HX5DE = JSON.parse(HX5DE)
+
+                if (HX5DE[0] == 1){
+                    document.getElementById("LNCYSS").innerHTML= "注册成功"
+                }
+                else{
+                    document.getElementById("LNCYSS").innerHTML= "注册失败，可能存在同名用户或输入不合法"
+                }
+            }
+        }
+        xmlhttp.send("");
+
+
+    }
+
+</script> 
+    <!-- 注册DOM -->
+    <div id="regi" style="display: none;padding: 20px;">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                <input type="text" placeholder="需要注册的用户名" class="layui-input" id="OIC145">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                <input type="text" placeholder="设置密码" class="layui-input" id="MXY7QX">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn" onclick="register()">确认</button>
+                </div>
+            </div>
+
+        </form>
+        <div id="LNCYSS">这里用来显示注册成功或者失败的信息</div>
+
+    </div>
+    
+</body>
+
+</html>
+      
