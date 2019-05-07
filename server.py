@@ -134,21 +134,31 @@ def register():
     u_password = request.args.get("u_password")
     u_type = 1          # 注册的用户默认都为普通用户，管理员用户只能亲自操作数据库添加，禁止注册成管理员
 
-    # 参数检查， 空参数直接返回注册失败
+    success_dict = {
+        "status": 1,
+    }
+
+    fail_dict = {
+        "status": 0,
+        "info": ""
+    }
+
+    # 参数检查， 空参数直接返回注册失败。虽然已经前端验证过了，但是为了安全这里必须再验证一遍
     if not u_name or not u_password:
-        return jsonify([0])
+        fail_dict["info"] = "用户名和密码都不能为空"
+        return jsonify(fail_dict)
 
     # 首先检查同名用户是否存在，如果存在则直接返回一个值，告诉前端这个用户已经存在了
-    sql1 = "select * from user where user.name='{}'".format(u_name)
-    res1 = list(db.session.execute(sql1))
-    if res1:
-        return jsonify([0])
+    u1 = User.query.filter_by(name=u_name).first()
+    if u1:
+        fail_dict["info"] = "存在同名用户，注册失败"
+        return jsonify(fail_dict)
 
-    # 同名用户不存在，插入新用户， 这里不使用SQL语句，而是使用ORM进行添加
+    # 同名用户不存在，插入新用户
     u = User(u_name, u_password, u_type)
     db.session.add(u)
     db.session.commit()
-    return jsonify([1])
+    return jsonify(success_dict)
 
 
 # 用户登录
@@ -156,18 +166,34 @@ def register():
 def login_validation():
     u_name = request.args.get("u_name")
     u_password = request.args.get("u_password")
+    success_dict = {
+        "status": 1
+    }
+
+    fail_ditc = {
+        "status": 0,
+        "info": ""
+    }
 
     # 空参数则直接返回0
     if u_name == "" or u_password == "":
-        return jsonify([0])
+        fail_ditc["info"] = "用户名和密码都不能留空"
+        return jsonify(fail_ditc)
 
+    u1 = User.query.filter_by(name=u_name).first()  # 检索用户
     u = User.query.filter_by(name=u_name, password=u_password).first()  # 检索用户
 
-    if u is not None:
+    if not u1:
+        fail_ditc["info"] = "用户不存在"
+        return jsonify(fail_ditc)
+
+    if not u and u1:
+        fail_ditc["info"] = "密码不正确"
+        return jsonify(fail_ditc)
+
+    if u:
         login_user(u)
-        return jsonify([1])     # 登陆成功，返回1
-    else:
-        return jsonify([0])     # 查不到用户返回0
+        return jsonify(success_dict)     # 登陆成功，返回1
 
 
 # 用户登出
@@ -185,18 +211,26 @@ def login_page():
 
 # 这个不作为web函数之一，单独拆分出来有其特别意义
 def cancel_one(idid, **kwargs):
-    sql1 = """
-    update book 
-    set iscancel=1
-    where book.userid={}
-    and book.iscancel=0
-    and book.id={}
-    """.format(current_user.id, idid)
 
+    # 这里还是使用ORM来进行查询比较方便
     if kwargs.__contains__("ispayed"):
-        sql1 += "and book.ispayed={}".format(kwargs["ispayed"])
+        b = Book.query.filter_by(id=idid, userid=current_user.id, iscancel=0, ispayed=kwargs["ispayed"]).first()
+    else:
+        b = Book.query.filter_by(id=idid, userid=current_user.id, iscancel=0, ).first()
 
-    db.session.execute(sql1)
+    # 查不到就直接结束
+    if not b:
+        return
+
+    b.iscancel = 1  # 执行update
+
+    # 在操作表记录这个信息
+    o = Operation()
+    o.userid = current_user.id
+    o.bookid = b.id
+    o.type = 0
+    o.cmtime = datetime.datetime.now()
+    db.session.add(o)
     db.session.commit()
 
 
@@ -217,16 +251,6 @@ def cancel_all():
     for x in cancel_list:
         cancel_one(x, ispayed=0)
 
-    # 在操作表记录这个信息
-    for x in cancel_list:
-        o = Operation()
-        o.userid = current_user.id
-        o.bookid = x
-        o.type = 0
-        o.cmtime = datetime.datetime.now()
-        db.session.add(o)
-    db.session.commit()
-
 
 # 首页，也是起到web容器的作用。不过还有额外加一层登陆验证。不登陆，连页面都无法递交。
 # 不止静态文件，其他接口也进行登陆验证。可以尽可能避免接口风险
@@ -239,15 +263,18 @@ def index_page():
 
 
 # 当前场地使用状况总览
-@app.route('/api/summary', methods=['GET'])
+@app.route('/api/summary')
 def summary():
+    success_dict = {
+        "status": 1
+    }
 
     sql1 = "select type, count(*) from field group by type"
     res1 = list(db.session.execute(sql1))
 
-    time = request.args.get("time")
+    mytime = request.args.get("time")
 
-    if time == "":
+    if mytime == "":
         sql2 = """
         select type,count(*) 
         from field,book 
@@ -264,7 +291,7 @@ def summary():
         and book.sttime<'{}'   
         and book.edtime >'{}'
         group by field.type 
-        """.format(time, time)
+        """.format(mytime, mytime)
 
     res2 = list(db.session.execute(sql2))
 
@@ -281,19 +308,26 @@ def summary():
     for x in res1:
         if temp_dict[x[0]] == "":
             temp_dict[x[0]] = "0"
-
         temp_dict[x[0]] += "/"+str(x[1])
 
-    return jsonify(temp_dict)
+    success_dict["info_dict"] = temp_dict
+    return jsonify(success_dict)
 
 
 # 最新预定
-@app.route('/api/latest', methods=['GET'])
+@app.route('/api/latest')
 def latest():
+    success_dict = {
+        "status": 1,
+        "info_list": []
+    }
     sql1 = """
-    select user.name,book.cmtime,field.name from book, user, field
+    select user.name,book.cmtime,field.name,book.sttime,book.edtime
+    from book, user, field
     where book.userid=user.id 
     and book.fieldid=field.id
+    and book.iscancel=0
+    and book.ispayed=1
     order by book.cmtime desc limit 3
     """
     res1 = list(db.session.execute(sql1))
@@ -302,29 +336,27 @@ def latest():
     for x in res1:
         temp_dict = {
             "username": x[0],
-            "cmtime": x[1],
-            "fieldname": x[2]
+            "cmtime": x[1][:19],
+            "fieldname": x[2],
+            "sttime": x[3][:19],
+            "edtime": x[4][:19],
         }
         temp_list.append(temp_dict)
-
-    return jsonify(temp_list)
+    success_dict["info_list"] = temp_list
+    return jsonify(success_dict)
 
 
 # 场地查询
-@app.route('/api/field_info', methods=['GET'])
+@app.route('/api/field_info')
 def field_info():
-    sql1 = """
-    select DISTINCT field.type from field 
-    """
-    res1 = list(db.session.execute(sql1))
-    # print(res1)
+    success_ditc = {
+        "status": 1,
+        "info_dict": None
+    }
     sql2 = """
     select * from field 
     """
     res2 = list(db.session.execute(sql2))
-
-    # print(res2)
-
     temp_dict = dict()
 
     for x in res2:
@@ -332,16 +364,19 @@ def field_info():
             temp_dict[x[1]] = []
         temp_dict[x[1]].append(list(x))
 
-    # print(temp_dict)
+    success_ditc["info_dict"] = temp_dict
+    return jsonify(success_ditc)
 
-    return jsonify(temp_dict)
 
-
-@app.route('/api/qry', methods=['GET'])
-def qry():
+@app.route('/api/field_use')
+def field_use():
     idid = request.args.get("idid")
+    success_dict = {
+        "status": 1,
+        "info_list": []
+    }
 
-    # 查询该表有没有被占用
+    # 查询该场地有没有被占用
     sql1 = """
     select user.name,field.name,book.sttime,book.edtime,book.cmtime
     from book,field,user 
@@ -353,9 +388,17 @@ def qry():
     order by book.cmtime desc
     """.format(idid)
     res1 = list(db.session.execute(sql1))
-    print(res1)
     temp_list = [list(x) for x in res1]
-    return jsonify(temp_list)
+
+    # 在这里处理一下时间，进行截断操作，否则将会有很长的小数点影响观看
+    for x in temp_list:
+        x[2] = x[2][:19]
+        x[3] = x[3][:19]
+        x[4] = x[4][:19]
+    # print(temp_list)
+
+    success_dict["info_list"] = temp_list
+    return jsonify(success_dict)
 
 
 @app.route('/api/bookit', methods=['GET'])
@@ -422,18 +465,18 @@ def bookit():
         b.iscancel = 0
         b.cmtime = datetime.datetime.now()
         b.ispayed = 0
+        db.session.add(b)
+        db.session.commit()
 
         o = Operation()
         o.userid = current_user.id
         o.bookid = b.id
         o.type = 1
         o.cmtime = datetime.datetime.now()
-
-        f = Field.query.get(idid)  # 获取一个场地对象，计算价格的时候需要用到单价
-
-        db.session.add(b)
         db.session.add(o)
         db.session.commit()
+
+        f = Field.query.get(idid)  # 获取一个场地对象，计算价格的时候需要用到单价
 
         # 计算小时数量，按照单价*小时数量进行收费
         delta = b.edtime - b.sttime
@@ -450,46 +493,110 @@ def bookit():
 
 @app.route("/api/pay")
 def pay():
-    idid = 1
-    return jsonify(1)
-
-
-@app.route('/api/get_field_name', methods=['GET'])
-def get_field_name():
     idid = request.args.get("idid")
-    sql1 = "select name from field where id={}".format(idid)
-    res1 = list(db.session.execute(sql1))
-    print(res1)
-    return jsonify([list(res1[0])])
+
+    success_dict = {
+        "status": 1
+    }
+
+    b = Book.query.get(idid)
+    if b.ispayed == 0:
+        b.ispayed = 1
+        o = Operation()
+        o.userid = current_user.id
+        o.type = 2
+        o.bookid = b.id
+        o.cmtime = datetime.datetime.now()
+        db.session.add(o)
+    db.session.commit()
+    return jsonify(success_dict)
+
+
+@app.route('/api/get_field_name')
+def get_field_name():
+
+    success_dict = {
+        "status": 1,
+        "name": ""
+    }
+
+    fail_dict = {
+        "status": 0,
+        "info": ""
+    }
+    idid = request.args.get("idid")
+
+    res = Field.query.filter_by(id=idid).first()
+    # print(res)
+    if res:
+        success_dict["name"] = res.name
+        return jsonify(success_dict)
+    else:
+        fail_dict["info"] = "获取失败，场地id不存在"
+        return jsonify(fail_dict)
 
 
 @app.route('/api/news_list')
 def news_list():
-    sql1 = "select * from news"
-    res1 = list(db.session.execute(sql1))
+    success_dict = {
+        "status": 0,
+        "info_list": []
+    }
 
-    temp_list = [list(x) for x in res1]
-    for x in temp_list:
-        x[2] = x[2][:100]
+    t_list = []
+    ns = News.query.order_by(News.id.desc()).all()
+    # 单单只是列表而已，有必要进行截断操作
+    for x in ns:
+        temp_list = list()
+        temp_list.append(x.id)
+        temp_list.append(x.title)
+        if len(x.content) >= 100:
+            temp_list.append(x.content[:100] + "......")
+        else:
+            temp_list.append(x.content)
+        t_list.append(temp_list)
 
-    return jsonify(temp_list)
+    success_dict["info_list"] = t_list
+    return jsonify(success_dict)
 
 
 @app.route('/api/news_detail')
 def news_detail():
     idid = request.args.get("idid")
-    sql1 = "select * from news where id={}".format(idid)
-    res1 = list(db.session.execute(sql1))
 
-    temp_list = [list(x) for x in res1]
+    success_dict = {
+        "status": 0,
+        "idid": "",
+        "title": "",
+        "content": ""
+    }
 
-    print(temp_list)
-    return jsonify(temp_list)
+    fail_dict = {
+        "status": 0,
+        "info": ""
+    }
+
+    # 在系统中正常使用永远不会执行这条语句，但是如果强行访问接口就会触发这个条件
+    if not idid:
+        fail_dict["info"] = "获取失败，新闻id不能为空"
+        return jsonify(fail_dict)
+
+    n = News.query.get(idid)
+    success_dict["idid"] = n.id
+    success_dict["title"] = n.title
+    success_dict["content"] = n.content
+
+    return jsonify(success_dict)
 
 
 @app.route('/api/user_book_list')
+@login_required
 def user_book_list():
-    # idid = 1
+    success_dict = {
+        "status": 1,
+        "info_list": []
+    }
+
     idid = current_user.id
     # 已经失效的订单就不要查询了，必须要是有效订单才进行查询（未取消，时间尚未失效）
     sql1 = """
@@ -503,14 +610,20 @@ def user_book_list():
     """.format(idid)
     res1 = list(db.session.execute(sql1))
     res1 = [list(x) for x in res1]
-    print(res1)
-    return jsonify(res1)
+    # 截断时间
+    for x in res1:
+        x[2] = x[2][:19]
+        x[3] = x[3][:19]
+        x[4] = x[4][:19]
+    success_dict["info_list"] = res1
+    return jsonify(success_dict)
 
 
 @app.route('/api/cancel')
 def cancel():
     idid = request.args.get("idid")
-    cancel_one(idid, current_user.id)
+    cancel_one(idid)
+
     return jsonify([1])
 
 
@@ -543,6 +656,43 @@ def user_change_profile():
     logout_user()
     return jsonify([1])
 
+
+@app.route('/api/last_operation')
+def last_operation():
+    success_dict = {
+        "status": 1,
+        "info_list": []
+    }
+    idid = current_user.id
+
+    # 这个查询过于复杂，不适合使用ORM
+    sql1 = """
+    select operation.cmtime,operation.type,field.name,book.sttime,book.edtime,book.id
+    from book,operation,field
+    where book.id=operation.bookid
+    and field.id=book.fieldid
+    and operation.userid={}
+    order by operation.cmtime desc
+    limit 20
+    """.format(idid)
+
+    res1 = list(db.session.execute(sql1))
+    # res1 = [list(x) for x in res1]
+    temp_list = []
+    for x in res1:
+        temp_dict = {
+            "cmtime": x[0][:19],
+            "type": x[1],
+            "name": x[2],
+            "sttime": x[3][:19],
+            "edtime": x[4][:19],
+            "idid": x[5]
+        }
+        temp_list.append(temp_dict)
+    success_dict["info_list"] = temp_list
+    return jsonify(success_dict)
+
+
 if __name__ == '__main__':
 
     # 管理员视图
@@ -557,5 +707,5 @@ if __name__ == '__main__':
 
 
     app.run(host='0.0.0.0', port=80)
-    # qry()
+
 

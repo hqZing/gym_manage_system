@@ -67,7 +67,7 @@
     });       
 
     show_regi = function(){
-        // document.getElementById("regi").style.display = "block";
+
         var $ = layui.$;//巨坑，如果不这么干的话无法使用jQuery选择器
         layer.open({
             type: 1,
@@ -100,7 +100,7 @@
         }
 
         console.log(u_name, u_password)
-        uri = "http://127.0.0.1/api/login_validation?u_name="+ u_name + "&u_password=" + u_password
+        uri = "/api/login_validation?u_name="+ u_name + "&u_password=" + u_password
 
         xmlhttp=new XMLHttpRequest();
         xmlhttp.open("GET", uri, true);
@@ -109,17 +109,17 @@
         xmlhttp.onreadystatechange = function(){
             if(xmlhttp.readyState==4 && xmlhttp.status==200){
                 
-                HX5DE = xmlhttp.responseText;
-                HX5DE = JSON.parse(HX5DE)
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
 
-                if (HX5DE[0] == 1){
+                if (myres["status"] == 1){
                     window.location.href="./index_page"; //登陆成功，跳转主页
                 }
                 else{
                     layer.open({
                         type: 1,
                         title: "提示",
-                        content: "<div style=\"padding: 20px;\">登陆失败，请检查用户名和密码是否正确</div>"
+                        content: "<div style=\"padding: 20px;\"><p>登陆失败</p><p>" + myres["info"] + "</p></div>"//后端返回的登录失败提示信息
                     });
                 }
             }
@@ -147,7 +147,7 @@
 
         console.log(u_name, u_password)
 
-        uri = "http://127.0.0.1/api/register?u_name="+ u_name + "&u_password=" + u_password
+        uri = "/api/register?u_name="+ u_name + "&u_password=" + u_password
 
         xmlhttp=new XMLHttpRequest();
         xmlhttp.open("GET", uri, true);
@@ -156,14 +156,15 @@
         xmlhttp.onreadystatechange = function(){
             if(xmlhttp.readyState==4 && xmlhttp.status==200){
                 
-                HX5DE = xmlhttp.responseText;
-                HX5DE = JSON.parse(HX5DE)
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres)
 
-                if (HX5DE[0] == 1){
-                    document.getElementById("LNCYSS").innerHTML= "注册成功"
+                if (myres["status"] == 1){
+                    document.getElementById("LNCYSS").innerHTML= "<p>注册成功</p>"
                 }
                 else{
-                    document.getElementById("LNCYSS").innerHTML= "注册失败，可能存在同名用户或输入不合法"
+                    document.getElementById("LNCYSS").innerHTML= "<p>" + myres["info"] + "</p>"
                 }
             }
         }
@@ -197,7 +198,7 @@
             </div>
 
         </form>
-        <div id="LNCYSS">这里用来显示注册成功或者失败的信息</div>
+        <div id="LNCYSS">......</div>
 
     </div>
     

@@ -14,9 +14,6 @@
             background-color: #d2d2d2;
         }
     </style>
-
-
-
 </head>
 <body>
 
@@ -110,7 +107,7 @@
                         <li class="layui-timeline-item">
                             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                             <div class="layui-timeline-content layui-text">
-                            <div class="layui-timeline-title">查看全部</div>
+                            <div class="layui-timeline-title" onclick="cd_cdcx()">查看全部</div>
                             </div>
                         </li>
 
@@ -180,6 +177,7 @@
 
             <div class="layui-col-md6">
                 <div class="layui-card">
+                    <div class="layui-card-header">个人信息</div>
                     <div class="layui-card-body" id="YM475X">
                         <!-- 修改个人信息的框框 -->
                         <form class="layui-form">
@@ -217,6 +215,7 @@
             
             <div class="layui-col-md6">
                 <div class="layui-card">
+                        <div class="layui-card-header">操作记录（只显示最近的20条）</div>
                     <div class="layui-card-body" id="RCM87E">？</div>
                 </div>   
             </div>
@@ -235,9 +234,6 @@
 
     //初始化layUI组件
     init_index = function(){
-        
-
-
 
         //导航栏
         layui.use('element', function(){
@@ -290,7 +286,7 @@
     pann5 = document.getElementById("pann5");
     panns = document.getElementsByClassName("pann")
 
-    //场地查询导航
+    //场地查询导航处理逻辑
     cd_cdcx = function(){
         //清除页面，只保留导航栏
         for(i=0;i<panns.length;i++) panns[i].style.display = "none";
@@ -302,7 +298,7 @@
         
     }
 
-    //体育新闻导航
+    //体育新闻导航处理逻辑
     cd_tyxw = function(){
         for(i=0;i<panns.length;i++) panns[i].style.display = "none";
         pann3.style.display = "block";
@@ -313,18 +309,20 @@
         
     }
     
-    //我的订单导航
+    //我的订单导航处理逻辑
     cd_wddd = function(){
         for(i=0;i<panns.length;i++) panns[i].style.display = "none";
         pann4.style.display = "block";
     }
 
+    //个人中心导航处理逻辑
     cd_grzx = function(){
         for(i=0;i<panns.length;i++) panns[i].style.display = "none";
         pann5.style.display = "block";
 
         //获取个人信息，包括当前的用户名。还有最近的一些操作记录
         user_get_profile();
+        last_operation();
     }
 
 
@@ -333,42 +331,36 @@
 
         time = document.getElementById("DF6X71").value
 
-        console.log(time);
         if (time==""){
             time = "2019-05-06 13:00:00"
         }
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/summary?time="+time,true);
+        xmlhttp.open("GET","/api/summary?time="+time,true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
 
             // 在监听函数中，判断readyState=4 && status=200表示请求成功
             if(xmlhttp.readyState==4 && xmlhttp.status==200){
+
                 // 使用responseText、responseXML接受响应数据，并使用原生JS操作DOM进行显示
-                C1D53 = xmlhttp.responseText;
-                C1D53 = JSON.parse(C1D53)
-
-                console.log(C1D53);
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres);
                 temp_html = ""
-
-    
 
                 //四种背景颜色轮流来
                 bgbg = ["layui-bg-orange", "layui-bg-blue", "layui-bg-red", "layui-bg-green"]
-                temp_ttt = 0
-                for (e in C1D53){
+                temp_color_code = 0
+                for (e in myres["info_dict"]){
                     temp_html += e
                     temp_html +=
                     "<div class=\"layui-progress layui-progress-big\" lay-showPercent=\"true\">" +
-                    "<div class=\"layui-progress-bar " + bgbg[temp_ttt] +"\" lay-percent=\""+C1D53[e]+"\"></div>" +
+                    "<div class=\"layui-progress-bar " + bgbg[temp_color_code] +"\" lay-percent=\""+myres["info_dict"][e]+"\"></div>" +
                     "</div><br>"
                 
-                    // console.log(e)
-                    temp_ttt = (temp_ttt+1) %4
+                    temp_color_code = (temp_color_code+1) % 4
                 }
-
-                // console.log(temp_html)
 
                 document.getElementById("MC2XH6").innerHTML = temp_html;
 
@@ -389,7 +381,7 @@
     latest = function(){
 
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/latest",true);
+        xmlhttp.open("GET","/api/latest",true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
@@ -399,16 +391,22 @@
                 myres = JSON.parse(myres)
 
                 console.log(myres);
-
+                mi = myres["info_list"]
                             
-                document.getElementById("JV2X4").innerHTML =  myres[0]["cmtime"]
-                document.getElementById("MJSF2").innerHTML =  "用户【" + myres[0]["username"] +"】" +"预约了"+ myres[0]["fieldname"]
+                document.getElementById("JV2X4").innerHTML =  mi[0]["cmtime"]
+                temp_html = "用户【" + mi[0]["username"] +"】" +"预约了"+ mi[0]["fieldname"] 
+                + "，<br>使用时间段为 " + mi[0]["sttime"] + "~" + mi[0]["edtime"]
+                document.getElementById("MJSF2").innerHTML = temp_html
 
-                document.getElementById("OF1DD").innerHTML =  myres[1]["cmtime"]
-                document.getElementById("DTX7J").innerHTML =  "用户【" + myres[1]["username"] +"】" +"预约了"+ myres[1]["fieldname"]
+                document.getElementById("OF1DD").innerHTML =  mi[1]["cmtime"]
+                temp_html = "用户【" + mi[1]["username"] +"】" +"预约了"+ mi[1]["fieldname"]
+                + "，<br>使用时间段为 " + mi[1]["sttime"] + "~" + mi[1]["edtime"]
+                document.getElementById("DTX7J").innerHTML = temp_html
 
-                document.getElementById("NJXCK").innerHTML =  myres[2]["cmtime"]
-                document.getElementById("AL021").innerHTML =  "用户【" + myres[2]["username"] +"】" +"预约了"+ myres[2]["fieldname"]
+                document.getElementById("NJXCK").innerHTML =  mi[2]["cmtime"]
+                temp_html = "用户【" + mi[2]["username"] +"】" +"预约了"+ mi[2]["fieldname"]
+                + "，<br>使用时间段为 " + mi[2]["sttime"] + "~" + mi[2]["edtime"]
+                document.getElementById("AL021").innerHTML = temp_html
             }
         }
 
@@ -419,34 +417,31 @@
     //场地查询
     field_info = function(){
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/field_info",true);
+        xmlhttp.open("GET","/api/field_info",true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
             if(xmlhttp.readyState==4 && xmlhttp.status==200){
                 myres = xmlhttp.responseText;
                 myres = JSON.parse(myres)
-
                 console.log(myres);
-
-                
 
                 temp_html = ""
                 temp_html2 = ""
+                mi = myres["info_dict"]
 
-                for (e in myres){
+                for (e in mi){
                     //标签标题
                     temp_html += "<li>" + e + "</li>" 
-
                     temp_html2 += "<div class=\"layui-tab-item layui-col-md3\">"
 
                     //分别添加标签页
-                    for (i=0; i<myres[e].length; i++){
+                    for (i=0; i<mi[e].length; i++){
                         temp_html2+= "<div class=\"layui-card\">"
-                        + "<div class=\"layui-card-header\">" + myres[e][i][2] + "</div>"
-                        + "<div class=\"layui-card-body\">" + myres[e][i][4] + "<br>价格为"+ myres[e][i][3] +"<br>"//+ "<br>id为" + myres[e][i][0] + "<br>"
-                        + "<button class=\"layui-btn  layui-btn-sm\" onclick=\"qry("+ myres[e][i][0] + ")\">查询</button>"
-                        + "<button class=\"layui-btn  layui-btn-sm layui-btn-warm\" onclick=\"get_field_name("+ myres[e][i][0] + ")\">预定</button>"
+                        + "<div class=\"layui-card-header\">" + mi[e][i][2] + "</div>"
+                        + "<div class=\"layui-card-body\">" + mi[e][i][4] + "<br>价格为"+ mi[e][i][3] +"<br>"//+ "<br>id为" + myres[e][i][0] + "<br>"
+                        + "<button class=\"layui-btn  layui-btn-sm\" onclick=\"field_use("+ mi[e][i][0] + ")\">查询</button>"
+                        + "<button class=\"layui-btn  layui-btn-sm layui-btn-warm\" onclick=\"get_field_name("+ mi[e][i][0] + ")\">预定</button>"
                         + "</div></div>"
                     }
                     temp_html2 += "</div>"
@@ -459,8 +454,6 @@
 
                 document.getElementById("MV3T98").children[0].className += 'layui-this'
                 document.getElementById("MV3T98").children[0].click()
-                // document.getElementById("IJMSL").children[0].className += 'layui-show'
-
                 
                 layui.use('element', function() {
                     var element = layui.element;
@@ -478,10 +471,10 @@
     }
 
     //查询场地占用状况。使用id查询
-    qry = function(idid){
-        console.log(idid)
+    field_use = function(idid){
+ 
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/qry?idid="+idid,true);
+        xmlhttp.open("GET","/api/field_use?idid="+idid,true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
@@ -489,30 +482,30 @@
                 
                 myres = xmlhttp.responseText;
                 myres = JSON.parse(myres)
-
                 console.log(myres);
 
-                temp_html = ""
+                mi = myres["info_list"]
 
+                temp_html = ""
                 temp_html += "<table class=\"layui-table\">"
                 +  "<thead><tr><th>用户</th><th>起始时间</th><th>结束时间</th><th>下单时间</th></tr></thead><tbody>"
 
-                for(i=0; i<myres.length; i++){
+                for(i=0; i<mi.length; i++){
                     temp_html += "<tr>"
-                    + "<td>" + myres[i][0] +"</td>"
-                    + "<td>" + myres[i][2] +"</td>"
-                    + "<td>" + myres[i][3] +"</td>"
-                    + "<td>" + myres[i][4] +"</td>"
+                    + "<td>" + mi[i][0] +"</td>"
+                    + "<td>" + mi[i][2] +"</td>"
+                    + "<td>" + mi[i][3] +"</td>"
+                    + "<td>" + mi[i][4] +"</td>"
                     + "</tr>"
                 }
 
                 temp_html += "</tbody></table>"
 
-                if (myres.length>0){
+                if (mi.length>0){
                     layer.open({
                         type: 1, 
                         area: '800px',
-                        title: myres[0][1]+"的预定情况",
+                        title: mi[0][1]+"的预定情况",
                         content:  "<div style=\"padding: 20px;\">" + temp_html + "</div>"
                     });
                 }
@@ -542,7 +535,7 @@
 
         //获取球场名称
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/get_field_name?idid="+idid,true);
+        xmlhttp.open("GET","/api/get_field_name?idid="+idid,true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
@@ -552,7 +545,7 @@
 
                 console.log(myres);
 
-                fname = myres[0]
+                fname = myres["name"]
                 //显示弹出层
                 layer.open({
                     type: 1, 
@@ -616,7 +609,8 @@
                     temp_html = "<p>预定成功, </p>" 
                     + "<p>你选择的场地使用时长共 " + myres["hours"] + " 小时</p>"
                     + "<p>需要支付的费用为 " + myres["totalprice"] +" 元</p>"
-                    + "<p>点我支付费用</p>"
+                    + "<p>请点击下面的按钮支付费用，若不支付直接关掉这个窗口，则视为取消订单</p>"
+                    + "<button class=\"layui-btn  layui-btn-sm\" onclick=\"pay("+ myres["bookid"] + ")\">支付</button>"
                 }
                 else{
                     temp_html = "<p>预定失败，</p><p>" + myres["info"] + "</p>"
@@ -627,7 +621,12 @@
                     type: 1, 
                     area: '500px',
                     title: "预定结果",
-                    content: "<div style=\"padding: 20px;\">" + temp_html + "</div>"
+                    content: "<div style=\"padding: 20px;\">" + temp_html + "</div>",
+                    cancel: function(){ 
+                        //右上角关闭回调，执行一次清除动作
+                        cancel(myres["bookid"])
+                    }
+
                 });
 
             }
@@ -638,10 +637,42 @@
 
     }
 
+    //支付一笔订单
+    pay =function(idid){
+        console.log("支付支付支付")
+
+        //请求后端接口
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","http://127.0.0.1/api/pay?idid="+idid,true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres)
+            }
+        }
+        xmlhttp.send("");
+
+        //更新订单信息
+        user_book_list()
+
+        //关闭旧的弹窗，开启新的弹窗
+        layer.closeAll(); 
+        layer.open({
+            type: 1, 
+            area: '500px',
+            title: "支付结果",
+            content: "<div style=\"padding: 20px;\">" + "支付成功，现在可以在“我的订单”里面查到相关订单了" + "</div>",
+        });
+    }
+
     //新闻列表
     news_list = function(){
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/news_list",true);
+        xmlhttp.open("GET","/api/news_list",true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
@@ -651,14 +682,14 @@
                 myres = JSON.parse(myres)
                 console.log(myres)
 
-
+                mi = myres["info_list"]
                 temp_html = ""
 
-                for (i=0; i<myres.length; i++){
+                for (i=0; i<mi.length; i++){
                     temp_html += "<div class=\"layui-col-md12\">"
                     + " <div class=\"layui-card\">"
-                    + "<div class=\"layui-card-header\"><a onclick=\"news_detail(" + myres[i][0] + ")\">" + myres[i][1] +"</a></div>"//新闻标题
-                    + "<div class=\"layui-card-body\">" + myres[i][2] + "</div>" //新闻预览
+                    + "<div class=\"layui-card-header\"><a onclick=\"news_detail(" + mi[i][0] + ")\">" + mi[i][1] +"</a></div>"//新闻标题
+                    + "<div class=\"layui-card-body\">" + mi[i][2] + "</div>" //新闻预览
                     + "</div></div>"
                 }
 
@@ -673,7 +704,7 @@
         console.log("idid", idid)
 
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/news_detail?idid="+idid,true);
+        xmlhttp.open("GET","/api/news_detail?idid="+idid,true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
@@ -681,13 +712,12 @@
                 myres = xmlhttp.responseText;
                 myres = JSON.parse(myres)
                 console.log(myres)
-                // 
 
                 layer.open({
                     type: 1, 
                     area: '1000px',
-                    title: myres[0][1],
-                    content: "<div style=\"padding: 20px;\">" + myres[0][2] + "</div>"
+                    title: myres["title"],
+                    content: "<div style=\"padding: 20px;\">" + myres["content"] + "</div>"
                 });
             }
         }
@@ -697,7 +727,7 @@
     //获取当前用户的订单列表
     user_book_list = function(){
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/user_book_list",true);
+        xmlhttp.open("GET","/api/user_book_list",true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
@@ -705,9 +735,10 @@
                 myres = xmlhttp.responseText;
                 myres = JSON.parse(myres)
                 console.log(myres)
+                mi = myres["info_list"]
 
                 //显示“我的订单”右上角那个小红字
-                document.getElementById("GCVSX").innerHTML = "" + myres.length
+                document.getElementById("GCVSX").innerHTML = "" + mi.length
 
                 //显示订单列表（在加载首页的时候也会照样进行这一步，只不过隐藏起来了没被看到而已）
                 temp_html = ""
@@ -715,15 +746,15 @@
                 +  "<tr><th>订单id</th><th>场地名称</th><th>起始时间</th><th>结束时间</th><th>下单时间</th><th>取消订单</th></tr>"
                 +"</thead><tbody>"
 
-                for (i=0; i<myres.length; i++){
+                for (i=0; i<mi.length; i++){
 
                     temp_html += "<tr>"
-                    + "<td>" + myres[i][0] +"</td>"
-                    + "<td>" + myres[i][1] +"</td>"
-                    + "<td>" + myres[i][2] +"</td>"
-                    + "<td>" + myres[i][3] +"</td>"
-                    + "<td>" + myres[i][4] +"</td>"
-                    + "<td>" + "<button type=\"button\" class=\"layui-btn layui-btn-danger\" onclick=\"cancel(" + myres[i][0] + ")\">取消</button>" +"</td>"
+                    + "<td>" + mi[i][0] +"</td>"
+                    + "<td>" + mi[i][1] +"</td>"
+                    + "<td>" + mi[i][2] +"</td>"
+                    + "<td>" + mi[i][3] +"</td>"
+                    + "<td>" + mi[i][4] +"</td>"
+                    + "<td>" + "<button type=\"button\" class=\"layui-btn layui-btn-danger\" onclick=\"cancel(" + mi[i][0] + ")\">取消</button>" +"</td>"
                     + "</tr>"
                 }
 
@@ -771,7 +802,6 @@
         xmlhttp.send("")
     }
 
-
     //修改个人信息
     user_change_profile= function(){
         u_name = document.getElementById("L4D76Q").value
@@ -815,6 +845,55 @@
         xmlhttp.send("")
     }
 
+    //获取最近的操作记录
+    last_operation = function(){
+
+        xmlhttp=new XMLHttpRequest();
+        //不需要加参数，后端直接获取当前用户
+        xmlhttp.open("GET","/api/last_operation", true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+        xmlhttp.onreadystatechange = function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                myres = xmlhttp.responseText;
+                myres = JSON.parse(myres)
+                console.log(myres)
+
+                mi = myres["info_list"]
+                //开始循环添加
+                temp_html = ""
+                temp_html += "<table class=\"layui-table\"><thead>" 
+                //+  "<tr><th>订单id</th><th>场地名称</th><th>起始时间</th><th>结束时间</th><th>下单时间</th><th>取消订单</th></tr>"
+                +"</thead><tbody>"
+
+                for (i=0; i<mi.length; i++){
+                    temp_ttt = "在 " + mi[i]["cmtime"] + " 时间<br>" 
+                    if (mi[i]["type"] == 0){
+                        temp_ttt  += "退订了 "
+                    } 
+                    if (mi[i]["type"] == 1){
+                        temp_ttt  += "预定了 "
+                    } 
+                    if (mi[i]["type"] == 2){
+                        temp_ttt  += "支付了 "
+                    } 
+                    temp_ttt += mi[i]["name"] + "<br>"
+
+                    if (mi[i]["type"] == 1){
+                        temp_ttt  += "使用时间段为" + mi[i]["sttime"] + "~" + mi[i]["edtime"] + "</br>"
+                    } 
+
+                    temp_ttt += "订单id为" + mi[i]["idid"] + "<br>"
+
+                    temp_html += "<tr>"
+                    + "<td>" + temp_ttt +"</td>"
+                    + "</tr>"
+                }
+                document.getElementById("RCM87E").innerHTML = temp_html
+            }
+        }
+        xmlhttp.send("")
+    }
     //退出登录
     logout = function(){
         window.location.href="/api/logout"
