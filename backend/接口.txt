@@ -1,0 +1,20 @@
+管理员登陆
+http://127.0.0.1/admin_login?name=admin&password=admin
+
+
+首页的状况总览
+http://127.0.0.1/summary
+
+场地查询
+http://127.0.0.1/field_info
+
+xmlhttp=new XMLHttpRequest();
+xmlhttp.open("GET","http://127.0.0.1/field_info",true);
+xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+
+xmlhttp.onreadystatechange = function(){
+    if(xmlhttp.readyState==4 && xmlhttp.status==200){
+
+    }
+}
+xmlhttp.send("");
