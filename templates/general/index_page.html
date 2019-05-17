@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>体育馆管理系统</title>
 
-    <!-- layUI样式表CDN -->
-    <link rel="stylesheet" href="https://heerey525.github.io/layui-v2.4.3/layui-v2.4.5/css/layui.css" type="text/css" />
+    <!-- layUI样式表 -->
+    <link rel="stylesheet" href="/static/layui/css/layui.css" type="text/css" />
 
     <style>
         body{
@@ -26,7 +26,7 @@
                 <li class="layui-nav-item"><a onclick="cd_cdcx()" >场地查询</a></li>
                 <li class="layui-nav-item"><a onclick="cd_wddd()" >我的订单<span class="layui-badge" id="GCVSX">0</span></a></li>
                 <li class="layui-nav-item"><a onclick="cd_tyxw()" >体育新闻<span class="layui-badge-dot"></span></a></li>
-                <li class="layui-nav-item"><a onclick="cd_grzx()" >个人中心</a></li>
+                <li class="layui-nav-item"><a onclick="cd_grzx()" id="IWT19Z">个人中心</a></li>
             </ul>
         </div>
     </div>
@@ -40,11 +40,11 @@
         <div class="layui-col-md12">
             <div class="layui-carousel" id="test1">
                 <div carousel-item>
-                    <div><img src="./img/1.png"></div>
-                    <div><img src="./img/2.png"></div>
-                    <div><img src="./img/3.png"></div>
-                    <div><img src="./img/4.png"></div>
-                    <div><img src="./img/5.png"></div>
+                    <div><img src="/static/img/1.png"></div>
+                    <div><img src="/static/img/2.png"></div>
+                    <div><img src="/static/img/3.png"></div>
+                    <div><img src="/static/img/4.png"></div>
+                    <div><img src="/static/img/5.png"></div>
                 </div>
             </div>
         </div>
@@ -184,7 +184,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">用户名</label>
                                 <div class="layui-input-block">
-                                <input type="text" value="sansansan" class="layui-input" id="L4D76Q">
+                                <input type="text" value="???" class="layui-input" id="L4D76Q">
                                 </div>
                             </div>
                 
@@ -226,8 +226,8 @@
 </div>
 
 
-<!-- layUI脚本CDN -->
-<script src="https://heerey525.github.io/layui-v2.4.3/layui-v2.4.5/layui.js"></script>
+<!-- layUI脚本 -->
+<script src="/static/layui/layui.js"></script>
 
 <!-- 核心交互脚本 -->
 <script>
@@ -322,7 +322,8 @@
 
         //获取个人信息，包括当前的用户名。还有最近的一些操作记录
         user_get_profile();
-        last_operation();
+        setTimeout("last_operation()", 1000);
+        
     }
 
 
@@ -331,9 +332,9 @@
 
         time = document.getElementById("DF6X71").value
 
-        if (time==""){
-            time = "2019-05-06 13:00:00"
-        }
+        // if (time==""){
+        //     time = "2019-05-06 13:00:00"
+        // }
         xmlhttp=new XMLHttpRequest();
         xmlhttp.open("GET","/api/summary?time="+time,true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -796,7 +797,12 @@
                 myres = xmlhttp.responseText;
                 myres = JSON.parse(myres)
                 console.log(myres)
-                document.getElementById("L4D76Q").value = myres[0]
+                console.log(1111111)
+                document.getElementById("L4D76Q").value = myres["name"]
+
+                //顺便把个人中心上面的导航栏上面加上用户的名字
+                document.getElementById("IWT19Z").innerHTML = "个人中心" + "【" + myres["name"] + "】"
+
             }
         }
         xmlhttp.send("")
@@ -819,7 +825,7 @@
                 myres = JSON.parse(myres)
                 console.log(myres)
                 
-                if (myres[0] == 1 ){
+                if (myres["status"] == 1 ){
                     //改完信息之后已经被登出了，所以这时候进行什么操作都是无效的，点击确定之后跳转到登陆页面重新登陆
                     layer.open({
                         type: 1, 
@@ -837,7 +843,7 @@
                         type: 1, 
                         area: '500px',
                         title: "提示",
-                        content: "<div style=\"padding: 20px;\">" + "修改信息失败，可能是用户名被占用，也可能是信息填写不完整" + "</div>"
+                        content: "<div style=\"padding: 20px;\">" + myres["info"] + "</div>"
                     });
                 }
             }
@@ -900,9 +906,11 @@
     }
     
     init_index()
-    setTimeout("latest()", 100)
-    setTimeout("summary()", 200)
-    setTimeout("user_book_list()", 300)
+    setTimeout("latest()", 200)
+    setTimeout("summary()", 400)
+    setTimeout("user_book_list()", 600)
+    setTimeout("user_get_profile()", 800)
+
 </script> 
 
 

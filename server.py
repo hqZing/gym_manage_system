@@ -1,3 +1,5 @@
+
+# coding=utf-8
 from flask import *
 from flask_cors import *
 from flask_sqlalchemy import SQLAlchemy
@@ -202,6 +204,10 @@ def logout():
     logout_user()
     return redirect(url_for("login_page"))
 
+# 访问根目录，跳转到login_page
+@app.route('/')
+def root_dir():
+    return redirect(url_for("login_page"))
 
 # 这里只是单纯起到web容器的作用，负责递交页面，验证逻辑有专门的接口：login_validation
 @app.route('/login_page')
@@ -527,7 +533,7 @@ def get_field_name():
     idid = request.args.get("idid")
 
     res = Field.query.filter_by(id=idid).first()
-    # print(res)
+
     if res:
         success_dict["name"] = res.name
         return jsonify(success_dict)
@@ -551,7 +557,7 @@ def news_list():
         temp_list.append(x.id)
         temp_list.append(x.title)
         if len(x.content) >= 100:
-            temp_list.append(x.content[:100] + "......")
+            temp_list.append(x.content[:100].replace("\n", "<br>") + "......")
         else:
             temp_list.append(x.content)
         t_list.append(temp_list)
@@ -584,7 +590,7 @@ def news_detail():
     n = News.query.get(idid)
     success_dict["idid"] = n.id
     success_dict["title"] = n.title
-    success_dict["content"] = n.content
+    success_dict["content"] = n.content.replace("\n", "<br>")
 
     return jsonify(success_dict)
 
@@ -638,6 +644,7 @@ def user_get_profile():
     }
 
     success_dict["name"] = u_name
+    print(success_dict)
     return jsonify(success_dict)
 
 
@@ -661,8 +668,8 @@ def user_change_profile():
 
     # 查询一下用户看看有没有重名的，重名直接返回失败
     temp_u = User.query.filter_by(name=u_name).first()
-    if not temp_u:
-        if temp_u.id != current_user.id
+    if temp_u:
+        if temp_u.id != current_user.id:
             fail_dict["info"] = "你想要的新用户名已经被其他用户占用"
             return jsonify(fail_dict)
 
@@ -723,7 +730,6 @@ if __name__ == '__main__':
     admin.add_view(MyModelView(Field, db.session))
     admin.add_view(MyModelView(News, db.session))
     admin.add_view(MyModelView(Operation, db.session))
-
 
     app.run(host='0.0.0.0', port=80)
 
