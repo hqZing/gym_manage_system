@@ -599,7 +599,7 @@
         //获取起始时间和结束时间，将其传参
         sttime_ = document.getElementById("MSYCIU").value
         edtime_ = document.getElementById("UCYENS").value
-        uri = "http://127.0.0.1/api/bookit?idid=" + idid +"&st=" + sttime_ +"&ed=" + edtime_
+        uri = "/api/bookit?idid=" + idid +"&st=" + sttime_ +"&ed=" + edtime_
 
         console.log(uri)
 
@@ -656,7 +656,7 @@
 
         //请求后端接口
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/pay?idid="+idid,true);
+        xmlhttp.open("GET","/api/pay?idid="+idid,true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
@@ -781,7 +781,7 @@
     //取消订单
     cancel = function(idid){
         xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET","http://127.0.0.1/api/cancel?idid="+idid, true);
+        xmlhttp.open("GET","/api/cancel?idid="+idid, true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
@@ -802,7 +802,7 @@
     user_get_profile = function(){
         xmlhttp=new XMLHttpRequest();
         //不需要加参数，后端直接获取当前用户
-        xmlhttp.open("GET","http://127.0.0.1/api/user_get_profile", true);
+        xmlhttp.open("GET","/api/user_get_profile", true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
         xmlhttp.onreadystatechange = function(){
@@ -829,7 +829,7 @@
     
         xmlhttp=new XMLHttpRequest();
         //需要提供用户名和密码
-        uri = "http://127.0.0.1/api/user_change_profile?u_name=" + u_name + "&u_password=" + u_password
+        uri = "/api/user_change_profile?u_name=" + u_name + "&u_password=" + u_password
         xmlhttp.open("GET", uri, true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
